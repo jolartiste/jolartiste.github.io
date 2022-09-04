@@ -21,6 +21,9 @@ html {
 
 body{
 	--background-color: 0,0,30;
+	--footer-v-padding: 0.75em;
+	--brand-font-size: max(16px, 1.875vw);
+	--dimmed-opacity: 62.5%;
 	
 	height: 100%;
 	width: 100%;
@@ -39,7 +42,7 @@ body,
 	font-family: 'PeterFonts';
 }
 
-
+.hidden-while-loading,
 .hidden {
 	visibility: hidden;
 	opacity: 0;
@@ -49,6 +52,15 @@ body,
 .coverflow-container,
 .fcf {
 	user-select: none;
+}
+
+.smoke-pallette,
+.coverflow-container,
+.fcf,
+.modal,
+nav,
+nav li,
+.close-modal {
 	transition-duration: 0.25s;
 	transition-timing-function: ease-in-out;
 	transition-property: visibility, opacity;
@@ -257,11 +269,98 @@ body,
 		0 calc(-0.5 * var(--shadow-distance)) var(--shadow-distance) rgba(0,0,0,50%);
 }
 
+.modal,
+.inner-modal {
+	box-sizing: border-box;
+}
+
+.modal {
+	--v-padding: max(0.75em, 1.25vw);
+	--h-padding: max(1.5em, 2.5vw);
+	
+	position: fixed;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	background-color: rgba(var(--background-color), 25%);
+	-webkit-backdrop-filter: blur(10px);
+	backdrop-filter: blur(10px);
+	padding-top: 3em;
+	font-size: max(0.83vw, 12px);
+}
+
+.inner-modal {
+	--top-padding: max(0.75em, 1.25vw);
+	
+	--mask: linear-gradient(
+		transparent,
+		white calc(2.25 * var(--top-padding))
+	);
+	
+	position: relative;
+	width: 100%;
+	height: 100%;
+	padding: var(--top-padding) var(--h-padding);
+	padding-bottom: calc(2 * var(--brand-font-size) + 2 * var(--footer-v-padding) + 3em);
+	line-height: 1.5;
+	diplay: flex;
+	flex-direction: column;
+	overflow: auto;
+	-webkit-mask-image: var(--mask);
+	mask-image: var(--mask);
+}
+
+.loading {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	width: max-content;
+	box-sizing: border-box;
+}
+
+.close-modal {
+	position: absolute;
+	right: 0;
+	top: 0;
+	font-size: 2em;
+	transform: rotateZ(45deg);
+	margin: 0 calc(var(--h-padding) / 2);
+	cursor: pointer;
+}
+
+@media (hover: hover) {
+	.close-modal:not(:hover) {
+		opacity: var(--dimmed-opacity);
+	}
+}
+
+.text {
+	max-width: 80ch;
+	margin: auto;
+	text-align: justify;
+}
+
+.text ul {
+	display: flex;
+	flex-direction: column;
+	row-gap: 1.5ch;
+}
+
+.text h2 {
+	font-size: 2em;
+}
+
+.text h3 {
+	font-size: 1.5em;
+}
+
 footer {
 	position: fixed;
 	bottom: 0;
 	left: 0;
-	padding: 0.75em 1.75em;
+	padding: var(--footer-v-padding) 1.75em;
 	width: 100%;
 	display: flex;
 	box-sizing: border-box;
@@ -276,7 +375,7 @@ nav {
 
 .brand {
 	font-family: 'Bettina Signature';
-	font-size: max(16px, 1.875vw);
+	font-size: var(--brand-font-size);
 	color: #fff49a;
 	margin-left: auto;
 	box-sizing: border-box;
@@ -311,17 +410,27 @@ nav ul {
 
 nav li,
 .copyright {
-	opacity: 62.5%;
+	opacity: var(--dimmed-opacity);
 }
 
 nav li {
 	cursor: pointer;
-	transition: 0.25s ease-in-out opacity;
+}
+
+nav li.active {
+	opacity: 100%;
 }
 
 @media (hover: hover) {
 	nav li:hover {
 		opacity: 100%;
+	}
+}
+
+@media (max-width: 100ch) {
+	nav.active {
+		visibility: hidden;
+		opacity: 0;
 	}
 }
 
