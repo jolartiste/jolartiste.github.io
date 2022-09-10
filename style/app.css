@@ -25,6 +25,8 @@ body{
 	--brand-font-size: max(16px, 1.875vw);
 	--dimmed-opacity: 62.5%;
 	--thin-glow: 0 0 1px 0 #fff;
+	--thin-border: var(--thin-glow), var(--thin-glow);
+	--text-default-color: 235, 235, 235;
 	
 	height: 100%;
 	width: 100%;
@@ -35,7 +37,7 @@ body{
 	align-items: center;
 	overflow: hidden;
 	background-color: rgb(var(--background-color));
-	color: #ebebeb;
+	color: rgb(var(--text-default-color));
 }
 
 body,
@@ -61,7 +63,9 @@ body,
 .modal,
 nav,
 nav li,
-.close-modal {
+.close-modal,
+.left-side,
+.right-side {
 	transition-duration: 0.25s;
 	transition-timing-function: ease-in-out;
 	transition-property: visibility, opacity;
@@ -105,6 +109,7 @@ nav li,
 	overflow: hidden;
 	-webkit-mask-image: var(--mask);
 	mask-image: var(--mask);
+	flex: none;
 }
 
 @media (orientation: landscape) {
@@ -190,7 +195,7 @@ nav li,
 }
 
 .fcf--visible:not(.fcf--median-visible) :is(.fcf-image, .fcf-title) {
-	--side-glow: calc(var(--shadow-direction) * 2px) 0 0 #ccc;
+	--side-glow: calc(var(--shadow-direction) * 2px) 0 0 0 #ccc;
 	filter: brightness(60%);
 }
 
@@ -201,7 +206,7 @@ nav li,
 	box-shadow:
 		var(--thin-glow),
 		var(--side-glow, none),
-		calc(var(--shadow-direction) * 15px) 10px 30px rgba(0,0,0,50%);
+		calc(var(--shadow-direction) * 15px) 10px 30px 0 rgba(0,0,0,50%);
 }
 
 :is(.fcf--first-visible, .fcf--last-visible) .fcf-image {
@@ -228,6 +233,14 @@ nav li,
 		-15px 10px 30px rgba(0,0,0,75%);
 }
 
+.fcf-title,
+aside .title,
+.fcf-title > * {
+	line-height: 1.625;
+	text-transform: uppercase;
+	letter-spacing: 0.1ch;
+}
+
 .fcf-title {
 	transform: translateY(50%);
 	width: 100%;
@@ -235,36 +248,39 @@ nav li,
 	justify-content: center;
 	overflow: visible;
 	font-size: 10px;
-	line-height: 1.625;
 }
 
-.fcf-title > * {
+.fcf-title > *,
+aside .title {
 	--shadow-distance: 2px;
-	--thin-border: var(--thin-glow), var(--thin-glow);
 	
 	background-color: rgb(20, 10, 10);
 	white-space: nowrap;
-	padding: 0.125em 0.25em;
 	box-sizing: border-box;
-	text-transform: uppercase;
-	text-overflow: ellipsis;
-	letter-spacing: 0.1ch;
-	max-width: 100%;
-	overflow: hidden;
 	border-radius: 0.3em;
 	padding: 0.25em 0.5em 0 0.5em;
+}
+
+.fcf-title > * {
+	text-overflow: ellipsis;
+	max-width: 100%;
+	overflow: hidden;
 
 	box-shadow:
 		var(--thin-border),
 		var(--side-glow, none),
-		calc(var(--shadow-direction, 0) * 5px) calc(-0.5 * var(--shadow-distance)) var(--shadow-distance) rgba(0,0,0,50%);
+		calc(var(--shadow-direction, 0) * 5px) calc(-0.5 * var(--shadow-distance)) var(--shadow-distance) 0 rgba(0,0,0,50%);
 
 }
 
 .fcf--median-visible .fcf-title > * {
 	box-shadow:
 		var(--thin-border),
-		0 calc(-0.5 * var(--shadow-distance)) var(--shadow-distance) rgba(0,0,0,50%);
+		0 calc(-0.5 * var(--shadow-distance)) var(--shadow-distance) 0 rgba(0,0,0,50%);
+}
+
+.modal {
+	z-index: 2;
 }
 
 .modal,
@@ -318,11 +334,12 @@ nav li,
 	margin: 0 calc(var(--h-padding) / 2);
 	cursor: pointer;
 	isolation: isolate;
+	transition-property: color;
 }
 
 @media (hover: hover) {
 	.close-modal:not(:hover) {
-		opacity: var(--dimmed-opacity);
+		color: rgba(var(--text-default-color), 50%);
 	}
 }
 
@@ -365,6 +382,62 @@ nav li,
 	transition-property: width, height;
 }
 
+aside {
+	--h-padding: max(5%, 100px);
+	
+	height: 100%;
+	max-width: 25%;
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	overflow: hidden;
+	box-sizing: border-box;
+	perspective: 600px;
+}
+
+aside:first-of-type {
+	align-items: flex-end;
+	padding-right: var(--h-padding);
+	filter: brightness(50%) blur(0.5px);
+	z-index: 1;
+}
+
+aside:last-of-type {
+	align-items: flex-start;
+	padding-left: var(--h-padding);
+	filter: brightness(75%) blur(0.5px);
+}
+
+aside > img {
+	height: max(60%, 500px);
+	-webkit-box-reflect: below -15% linear-gradient(to bottom, transparent 40%, rgba(239, 239, 239, 75%) 100%);
+}
+
+aside .title {
+	--rotation: 20deg;
+	--translate: 20%;
+	
+	transform:
+		rotateY(calc(-1 * var(--shadow-direction) * var(--rotation)))
+		translate(calc(-1 * var(--shadow-direction) * var(--translate)), -75%);
+
+	box-shadow:
+		var(--thin-border),
+		calc(var(--shadow-direction) * 2px) 0 0 0 #ccc,
+		calc(var(--shadow-direction) * 5px) calc(-0.5 * var(--shadow-distance)) var(--shadow-distance) 0 rgba(0,0,0,50%);
+		
+	-webkit-box-reflect: below -15% linear-gradient(to bottom, transparent, rgba(239, 239, 239, 50%) 100%);
+}
+
+aside:first-of-type .title {
+	--shadow-direction: -1;
+}
+
+aside:last-of-type .title {
+	--shadow-direction: 1;
+}
+
 footer {
 	position: fixed;
 	bottom: 0;
@@ -374,6 +447,7 @@ footer {
 	display: flex;
 	box-sizing: border-box;
 	align-items: center;
+	z-index: 3;
 }
 
 .brand,

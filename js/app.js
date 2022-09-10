@@ -129,13 +129,17 @@ function openModal (setContent) {
 }
 
 function closeModal () {
-  document.querySelector('.modal').classList.add('hidden')
+  const modal = document.querySelector('.modal')
+  
+  modal.addEventListener('transitionend', () => {
+    setModalLoading()
+    isSlideshowStopped = false
+    startSlideshow()
+  }, { once: true })
+  
+  modal.classList.add('hidden')
   
   for (const element of Array.from(document.querySelectorAll('footer .active'))) {
     element.classList.remove('active')
   }
-  
-  setModalLoading()
-  isSlideshowStopped = false
-  startSlideshow()
 }
