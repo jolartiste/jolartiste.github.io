@@ -44,18 +44,13 @@ artFlow.onInit(() => {
   })
   
   document.querySelector('.about').addEventListener('click', async ({ target }) => {
-    const modal = document.querySelector('.modal')
-    const innerModal = modal.querySelector('.inner-modal')
-    const isClosed = modal.classList.contains('hidden')
-  
-    modal.classList.toggle('hidden')
+    const isMenuActive = target.classList.contains('active')
     target.classList.toggle('active')
-    target.closest('nav').classList.toggle('active')
     
-    if (isClosed) {
-      isSlideshowStopped = true
-      pauseSlideshow()
-      innerModal.innerHTML = await (await fetch('about.html')).text()
+    if (!isMenuActive) {
+      openModal(async (innerModal) => {
+        innerModal.innerHTML = await (await fetch('about.html')).text()
+      })
     } else {
       closeModal()
     }
@@ -67,14 +62,49 @@ artFlow.onInit(() => {
 
 setModalLoading()
 
-// artFlow.onZoom((event) => console.debug('third Coverflow zoom:', event))
+document.querySelector('.modal').addEventListener(
+  'load',
+  ({ target }) => target.style.setProperty('width', target.naturalWidth + 'px'),
+  { capture: true }
+)
+
+artFlow.onZoom(({ target }) => {
+  const template = document.querySelector('#zoom').content.cloneNode(true)
+  const picture = template.querySelector('img')
+  
+  const minWidth = parseInt(getComputedStyle(target).getPropertyValue('width'), 10)
+  const minHeight = parseInt(getComputedStyle(target).getPropertyValue('height'), 10)
+  
+  picture.style.width = `${minWidth * 1.33}px`
+  picture.style.aspectRatio = `${minWidth} / ${minHeight}`
+  picture.style.backgroundImage = `url(${target.getAttribute('src')})`
+  picture.setAttribute('src', target.dataset.zoomUrl)
+
+  template.querySelector('h2').innerHTML = target.alt
+  
+  const paragraph = template.querySelector('p')
+  
+  if (target.dataset.description?.trim()) {
+    paragraph.innerHTML = target.dataset.description
+  } else {
+    paragraph.remove()
+  }
+  
+  openModal(innerModal => {
+    innerModal.innerHTML = ''
+    innerModal.appendChild(template)
+  })
+})
+
 artFlow.onPrevious(startSlideshow)
 artFlow.onNext(startSlideshow)
 artFlow.init()
 
 function setModalLoading () {
   const template = document.querySelector('#loading').content.cloneNode(true)
-  document.querySelector('.modal .inner-modal').innerHTML = template.children[0].outerHTML
+  const innerModal = document.querySelector('.modal .inner-modal')
+  innerModal.innerHTML = ''
+  innerModal.appendChild(template)
 }
 
 function startSlideshow () {
@@ -84,6 +114,18 @@ function startSlideshow () {
 
 function pauseSlideshow () {
   clearInterval(intervalId)
+}
+
+function openModal (setContent) {
+  document.querySelector('footer nav').classList.add('active')
+  
+  const modal = document.querySelector('.modal')
+  modal.classList.remove('hidden')
+  
+  isSlideshowStopped = true
+  pauseSlideshow()
+  
+  return setContent(modal.querySelector('.inner-modal'))
 }
 
 function closeModal () {
