@@ -27,6 +27,7 @@ body{
 	--thin-glow: 0 0 1px 0 #fff;
 	--thin-border: var(--thin-glow), var(--thin-glow);
 	--text-default-color: 235, 235, 235;
+	--no-shadow: 0 0 0 0 transparent;
 	
 	height: 100%;
 	width: 100%;
@@ -205,15 +206,15 @@ nav li,
 ) .fcf-image {
 	box-shadow:
 		var(--thin-glow),
-		var(--side-glow, none),
+		var(--side-glow, var(--no-shadow)),
 		calc(var(--shadow-direction) * 15px) 10px 30px 0 rgba(0,0,0,50%);
 }
 
 :is(.fcf--first-visible, .fcf--last-visible) .fcf-image {
-	box-shadow: var(--side-glow, none);
+	box-shadow: var(--side-glow, var(--no-shadow));
 }
 
-.fcf--first-visible,
+.fcf--first-visible:not(.fcf--median-visible),
 .fcf--first-visible ~ .fcf--visible {
 	--shadow-direction: -1;
 }
@@ -268,7 +269,7 @@ aside .title {
 
 	box-shadow:
 		var(--thin-border),
-		var(--side-glow, none),
+		var(--side-glow, var(--no-shadow)),
 		calc(var(--shadow-direction, 0) * 5px) calc(-0.5 * var(--shadow-distance)) var(--shadow-distance) 0 rgba(0,0,0,50%);
 
 }
