@@ -38,6 +38,7 @@ body{
 	align-items: center;
 	overflow: hidden;
 	background-color: rgb(var(--background-color));
+	background-image: linear-gradient(rgb(75, 50, 50), transparent 66%);
 	color: rgb(var(--text-default-color));
 }
 
@@ -73,7 +74,7 @@ nav li,
 }
 
 .smoke-pallette {
-	--glow-color: 255, 255, 200;
+	--glow-color: 200, 200, 255;
 	
 	position: absolute;
 	left: 50%;
@@ -87,8 +88,16 @@ nav li,
 		circle at 50%,
 		rgba(var(--glow-color), 37.5%) 0,
 		rgba(var(--glow-color), 28.125%) 16.5%,
+		rgba(var(--glow-color), 12.5%) 25%,
+		rgba(var(--glow-color), 5%) 40%,
 		rgba(var(--glow-color), 0) 50%
 	);
+}
+
+@media (max-width: 640px) {
+	.smoke-pallette {
+		--glow-color: 100, 100, 255;
+	}
 }
 
 .coverflow-container {
@@ -400,14 +409,14 @@ aside {
 aside:first-of-type {
 	align-items: flex-end;
 	padding-right: var(--h-padding);
-	filter: brightness(50%) blur(0.5px);
+	filter: brightness(50%) blur(1px);
 	z-index: 1;
 }
 
 aside:last-of-type {
 	align-items: flex-start;
 	padding-left: var(--h-padding);
-	filter: brightness(75%) blur(0.5px);
+	filter: brightness(75%) blur(1px);
 }
 
 aside > img {
