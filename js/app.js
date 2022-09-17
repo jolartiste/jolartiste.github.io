@@ -45,14 +45,20 @@ artFlow.onInit(() => {
   
   document.querySelector('.about').addEventListener('click', async ({ target }) => {
     const isMenuActive = target.classList.contains('active')
-    target.classList.toggle('active')
-    
+
     if (!isMenuActive) {
-      openModal(async (innerModal) => {
-        innerModal.innerHTML = await (await fetch('about.html')).text()
+      const isModalOpen = !document.querySelector('.modal').classList.contains('hidden')
+      
+      if (isModalOpen) {
+        await closeModal({ isTransition: true })
+      }
+      
+      target.classList.add('active')
+
+      openModal({
+        async setContent (innerModal) { innerModal.innerHTML = await (await fetch('about.html')).text() },
+        isTransition: isModalOpen
       })
-    } else {
-      closeModal()
     }
   })
   
@@ -90,9 +96,11 @@ artFlow.onZoom(({ target }) => {
     paragraph.remove()
   }
   
-  openModal(innerModal => {
-    innerModal.innerHTML = ''
-    innerModal.appendChild(template)
+  openModal({
+    setContent (innerModal) {
+      innerModal.innerHTML = ''
+      innerModal.appendChild(template)
+    }
   })
 })
 
@@ -116,30 +124,50 @@ function pauseSlideshow () {
   clearInterval(intervalId)
 }
 
-function openModal (setContent) {
+function openModal ({ setContent, isTransition = false }) {
   document.querySelector('footer nav').classList.add('active')
   
   const modal = document.querySelector('.modal')
   modal.classList.remove('hidden')
   
-  isSlideshowStopped = true
-  pauseSlideshow()
+  if (!isTransition) {
+    isSlideshowStopped = true
+    pauseSlideshow()
+  }
   
   return setContent(modal.querySelector('.inner-modal'))
 }
 
-function closeModal () {
+function closeModal ({ isTransition = false } = {}) {
+  const tearingDownModal = []
   const modal = document.querySelector('.modal')
   
-  modal.addEventListener('transitionend', () => {
-    setModalLoading()
-    isSlideshowStopped = false
-    startSlideshow()
-  }, { once: true })
+  const restoringLoading = new Promise(resolve => {
+    modal.addEventListener('transitionend', () => {
+      setModalLoading()
+      resolve()
+    }, { once: true })
+  })
+  
+  tearingDownModal.push(restoringLoading)
+  
+  if (!isTransition) {
+    const restartingSlideshow = new Promise(resolve => {
+      modal.addEventListener('transitionend', () => {
+        isSlideshowStopped = false
+        startSlideshow()
+        resolve()
+      }, { once: true })
+    })
+    
+    tearingDownModal.push(restartingSlideshow)
+  }
   
   modal.classList.add('hidden')
   
   for (const element of Array.from(document.querySelectorAll('footer .active'))) {
     element.classList.remove('active')
   }
+  
+  return Promise.all(tearingDownModal)
 }
