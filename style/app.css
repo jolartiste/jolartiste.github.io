@@ -481,6 +481,7 @@ footer {
 	box-sizing: border-box;
 	align-items: center;
 	z-index: 3;
+	pointer-events: none;
 }
 
 .brand,
@@ -528,6 +529,7 @@ nav li::first-letter {
 
 nav {
 	font-size: max(16px, 1.25vw);
+	pointer-events: auto;
 }
 
 nav ul {
