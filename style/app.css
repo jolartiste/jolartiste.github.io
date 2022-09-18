@@ -370,6 +370,7 @@ aside .title {
 	max-width: 80ch;
 	margin: auto;
 	text-align: justify;
+	hyphens: auto;
 }
 
 .text ul {
