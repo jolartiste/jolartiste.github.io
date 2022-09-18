@@ -29,6 +29,8 @@ body{
 	--text-default-color: 235, 235, 235;
 	--no-shadow: 0 0 0 0 transparent;
 	
+	overflow: hidden;
+	position: fixed;
 	height: 100%;
 	width: 100%;
 	padding: 0;
@@ -36,10 +38,10 @@ body{
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	overflow: hidden;
 	background-color: rgb(var(--background-color));
 	background-image: linear-gradient(rgb(75, 50, 50), transparent 66%);
 	color: rgb(var(--text-default-color));
+	-webkit-overflow-scrolling: touch;
 }
 
 body,
@@ -154,9 +156,20 @@ nav li,
 	margin-top: -15vh;
 	margin-left: 0;
 	margin-right: 0;
-	width: 50vw;
 	min-width: 640px;
 	isolation: isolate;
+}
+
+@media (orientation: landscape) {
+	.fcf {
+		width: 50vw;
+	}
+}
+
+@media (orientation: portrait) {
+	.fcf {
+		width: 75vw;
+	}
 }
 
 .fcf::before {
@@ -393,8 +406,6 @@ aside .title {
 }
 
 aside {
-	--h-padding: max(5%, 100px);
-	
 	height: 100%;
 	max-width: 25%;
 	flex: 1 1 auto;
@@ -406,17 +417,29 @@ aside {
 	perspective: 600px;
 }
 
+@media (orientation: landscape) {
+	aside {
+		--h-padding: max(5%, 100px);
+	}
+}
+
+@media (orientation: portrait) {
+	aside {
+		--h-padding: max(5%, 30px);
+	}
+}
+
 aside:first-of-type {
 	align-items: flex-end;
 	padding-right: var(--h-padding);
-	filter: brightness(50%) blur(1px);
+	filter: brightness(50%) blur(0.1vh);
 	z-index: 1;
 }
 
 aside:last-of-type {
 	align-items: flex-start;
 	padding-left: var(--h-padding);
-	filter: brightness(75%) blur(1px);
+	filter: brightness(75%) blur(0.1vh);
 }
 
 aside > img {
